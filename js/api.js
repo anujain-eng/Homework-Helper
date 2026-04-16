@@ -71,6 +71,12 @@ async function sendToClaude(userMessage, imageBase64 = null) {
   }
 
   const player = getCurrentPlayer();
+
+  // New photo = new homework page, clear old conversation before building messages
+  if (imageBase64 && player) {
+    player.chatHistory = [];
+  }
+
   const chatHistory = player ? player.chatHistory : [];
 
   // Build messages array
@@ -143,11 +149,6 @@ async function sendToClaude(userMessage, imageBase64 = null) {
 
     // Store in chat history (include image so follow-ups retain context)
     if (player) {
-      // New photo = new homework page, clear old conversation
-      if (imageBase64) {
-        player.chatHistory = [];
-      }
-
       if (imageBase64) {
         player.chatHistory.push({ role: 'user', content: content });
       } else {
