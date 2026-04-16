@@ -76,14 +76,15 @@ async function handleSendMessage() {
   const response = await sendToClaude(text, _pendingImage);
   _pendingImage = null;
 
-  // Only count hints for real problem-solving exchanges:
-  // - Skip problem selection ("1", "2", "3", "problem 2", etc.)
-  // - Skip messages after the problem is already solved (explaining reasoning)
-  // - Skip photo uploads with no real answer
-  const isSelection = /^\s*\d\s*$/.test(text) || /^(problem|question|number)\s*\d/i.test(text);
+  // Only count hints when the student gives a WRONG answer and gets a hint.
+  // Don't count: navigation, problem selection, first correct answer, post-solve chat.
+  const isNavigation = /^\s*\d\s*$/.test(text)
+    || /^(problem|question|number)\s*\d/i.test(text)
+    || /^(let'?s|can we|go to|next|move on|start|try|do|yes|ok|sure|ready|yeah|no|help|please|what|how|why|huh)/i.test(text);
   const isPhotoOnly = !text || text === '📸 Help me with this!';
+  const solved = checkIfSolved(response);
 
-  if (!isSelection && !isPhotoOnly && !_problemSolved) {
+  if (!isNavigation && !isPhotoOnly && !_problemSolved && !solved) {
     if (_problemActive) {
       _hintCount++;
     } else {
@@ -94,8 +95,6 @@ async function handleSendMessage() {
   // Hide typing indicator
   typing.classList.add('hidden');
 
-  // Check if solved
-  const solved = checkIfSolved(response);
   const cleanText = cleanResponseText(response);
 
   // Show tutor response

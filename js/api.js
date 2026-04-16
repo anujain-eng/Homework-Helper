@@ -46,6 +46,14 @@ SUBJECT EXPERTISE (RSM Grade 2 Advanced):
 - Visual/picture problems (counting squares, comparing quantities, diagrams with jugs/weights)
 - Also: spelling, reading comprehension, science basics
 
+ARITHMETIC VERIFICATION — CRITICAL:
+- ALWAYS work through arithmetic step by step BEFORE judging a student's answer.
+- For addition: add ones column, carry if needed, add tens column, carry if needed, add hundreds column.
+- For subtraction: borrow if needed, subtract each column.
+- NEVER tell a student they are wrong unless you have verified the correct answer yourself.
+- If a student's answer is correct, say so immediately — do NOT say "not quite" to a correct answer.
+- Getting this wrong destroys the student's confidence and trust in the app.
+
 WHEN LOOKING AT A HOMEWORK PHOTO:
 - Read the problem text carefully and accurately from the image
 - When confirming what you see, quote the ACTUAL words from the page — never paraphrase loosely
@@ -59,7 +67,7 @@ WHEN LOOKING AT A HOMEWORK PHOTO:
 Keep responses SHORT (2-4 sentences max). Don't overwhelm a 7-year-old with long text.`;
 
 // ── Track last uploaded image so it stays in context ────────────────
-let _lastHomeworkImage = null;
+let _lastHomeworkImage = localStorage.getItem('eq_last_image') || null;
 
 // ── Send message to Claude API ───────────────────────────────────────
 async function sendToClaude(userMessage, imageBase64 = null) {
@@ -68,6 +76,7 @@ async function sendToClaude(userMessage, imageBase64 = null) {
 
   if (imageBase64) {
     _lastHomeworkImage = imageBase64;
+    try { localStorage.setItem('eq_last_image', imageBase64); } catch (e) {}
   }
 
   const player = getCurrentPlayer();
