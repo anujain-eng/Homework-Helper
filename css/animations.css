@@ -1,0 +1,318 @@
+/* ==========================================================================
+   EmeraldQuest — Animations & Keyframes
+   Premium quality: every interaction feels alive and magical.
+   ========================================================================== */
+
+/* ── Screen transitions ──────────────────────────────────────────── */
+@keyframes screenFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes screenSlideLeft {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes screenSlideRight {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Pulse / Glow ────────────────────────────────────────────────── */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.05); }
+}
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 8px var(--emerald-glow); }
+  50%      { box-shadow: 0 0 24px var(--emerald-glow), 0 0 48px rgba(80,200,120,0.2); }
+}
+@keyframes glowGold {
+  0%, 100% { box-shadow: 0 0 8px var(--gold-glow); }
+  50%      { box-shadow: 0 0 24px var(--gold-glow), 0 0 48px rgba(255,215,0,0.2); }
+}
+@keyframes pulseGlow {
+  0%, 100% { filter: brightness(1); text-shadow: 0 0 8px var(--emerald-glow); }
+  50%      { filter: brightness(1.3); text-shadow: 0 0 20px var(--emerald-glow); }
+}
+
+/* ── Bounce / Float ──────────────────────────────────────────────── */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+@keyframes bounceBig {
+  0%, 100% { transform: translateY(0) scale(1); }
+  40%      { transform: translateY(-20px) scale(1.05); }
+  60%      { transform: translateY(-18px) scale(1.05); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33%      { transform: translateY(-6px) rotate(1deg); }
+  66%      { transform: translateY(-3px) rotate(-1deg); }
+}
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}
+@keyframes wobble {
+  0%, 100% { transform: rotate(0deg); }
+  25%      { transform: rotate(2deg); }
+  75%      { transform: rotate(-2deg); }
+}
+
+/* ── Character breathing / sway ──────────────────────────────────── */
+@keyframes breathe {
+  0%, 100% { transform: scaleY(1) translateY(0); }
+  50%      { transform: scaleY(1.02) translateY(-2px); }
+}
+@keyframes sway {
+  0%, 100% { transform: rotate(0deg) translateX(0); }
+  25%      { transform: rotate(1.5deg) translateX(2px); }
+  75%      { transform: rotate(-1.5deg) translateX(-2px); }
+}
+
+/* ── Pet idle animations ─────────────────────────────────────────── */
+@keyframes petBounce {
+  0%, 100% { transform: translateY(0) scaleX(1) scaleY(1); }
+  30%      { transform: translateY(-10px) scaleX(0.95) scaleY(1.05); }
+  50%      { transform: translateY(-12px) scaleX(0.95) scaleY(1.05); }
+  80%      { transform: translateY(2px) scaleX(1.05) scaleY(0.95); }
+}
+@keyframes petWag {
+  0%, 100% { transform: rotate(0deg); }
+  25%      { transform: rotate(8deg); }
+  75%      { transform: rotate(-8deg); }
+}
+@keyframes heartFloat {
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-40px) scale(1.5); }
+}
+
+/* ── Emerald fly-up ──────────────────────────────────────────────── */
+@keyframes emeraldFlyUp {
+  0%   { opacity: 0; transform: translateY(60px) scale(0.3) rotate(0deg); }
+  30%  { opacity: 1; transform: translateY(-20px) scale(1.2) rotate(180deg); }
+  60%  { transform: translateY(-40px) scale(1) rotate(360deg); }
+  100% { opacity: 0; transform: translateY(-80px) scale(0.5) rotate(540deg); }
+}
+@keyframes emeraldCountBounce {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.4); }
+  60%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+/* ── Sparkle / Twinkle ───────────────────────────────────────────── */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50%      { opacity: 1; transform: scale(1.2); }
+}
+@keyframes sparkle {
+  0%   { opacity: 0; transform: scale(0) rotate(0deg); }
+  50%  { opacity: 1; transform: scale(1) rotate(180deg); }
+  100% { opacity: 0; transform: scale(0) rotate(360deg); }
+}
+@keyframes sparkleTrail {
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-30px) scale(0); }
+}
+
+/* ── Shooting star ───────────────────────────────────────────────── */
+@keyframes shootingStar {
+  0%   { opacity: 0; transform: translateX(-100px) translateY(-100px); }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { opacity: 0; transform: translateX(400px) translateY(400px); }
+}
+
+/* ── Confetti ────────────────────────────────────────────────────── */
+@keyframes confettiFall {
+  0%   { opacity: 1; transform: translateY(-10px) rotate(0deg); }
+  100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
+}
+@keyframes confettiSway {
+  0%, 100% { transform: translateX(0); }
+  50%      { transform: translateX(30px); }
+}
+
+/* ── Battle animations ───────────────────────────────────────────── */
+@keyframes battleSlideInLeft {
+  from { opacity: 0; transform: translateX(-100%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes battleSlideInRight {
+  from { opacity: 0; transform: translateX(100%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes attackSlash {
+  0%   { transform: translateX(0) rotate(0deg); }
+  30%  { transform: translateX(80px) rotate(15deg); }
+  50%  { transform: translateX(120px) rotate(-5deg) scale(1.1); }
+  100% { transform: translateX(0) rotate(0deg) scale(1); }
+}
+@keyframes demonFlinch {
+  0%   { transform: translateX(0); }
+  20%  { transform: translateX(20px) rotate(3deg); }
+  40%  { transform: translateX(-10px) rotate(-2deg); }
+  60%  { transform: translateX(5px); }
+  100% { transform: translateX(0); }
+}
+@keyframes screenShake {
+  0%, 100% { transform: translate(0, 0); }
+  10%      { transform: translate(-5px, -3px); }
+  20%      { transform: translate(5px, 2px); }
+  30%      { transform: translate(-3px, 5px); }
+  40%      { transform: translate(3px, -2px); }
+  50%      { transform: translate(-2px, 3px); }
+}
+@keyframes criticalHitText {
+  0%   { opacity: 0; transform: scale(0.3) rotate(-10deg); }
+  40%  { opacity: 1; transform: scale(1.3) rotate(3deg); }
+  70%  { transform: scale(0.95) rotate(-1deg); }
+  100% { opacity: 0; transform: scale(1.5) translateY(-30px); }
+}
+@keyframes hpDrop {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+@keyframes demonShatter {
+  0%   { opacity: 1; transform: scale(1); filter: brightness(1); }
+  30%  { opacity: 1; transform: scale(1.05); filter: brightness(3); }
+  70%  { opacity: 0.5; transform: scale(1.1); filter: brightness(5); }
+  100% { opacity: 0; transform: scale(1.5); filter: brightness(10); }
+}
+@keyframes victoryBanner {
+  0%   { opacity: 0; transform: translateY(-100%) scale(0.5); }
+  60%  { opacity: 1; transform: translateY(10%) scale(1.05); }
+  80%  { transform: translateY(-2%) scale(0.98); }
+  100% { transform: translateY(0) scale(1); }
+}
+@keyframes powerUp {
+  0%   { box-shadow: 0 0 10px var(--emerald-glow); transform: scale(1); }
+  50%  { box-shadow: 0 0 60px var(--emerald-glow), 0 0 100px var(--gold-glow); transform: scale(1.1); }
+  100% { box-shadow: 0 0 10px var(--emerald-glow); transform: scale(1); }
+}
+@keyframes victoryDance {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  15%      { transform: translateY(-15px) rotate(-8deg); }
+  30%      { transform: translateY(0) rotate(8deg); }
+  45%      { transform: translateY(-10px) rotate(-5deg); }
+  60%      { transform: translateY(0) rotate(5deg); }
+}
+
+/* ── Loot rain ───────────────────────────────────────────────────── */
+@keyframes lootDrop {
+  0%   { opacity: 0; transform: translateY(-100px) rotate(0deg); }
+  60%  { opacity: 1; }
+  80%  { transform: translateY(10px) rotate(360deg); }
+  100% { opacity: 1; transform: translateY(0) rotate(360deg); }
+}
+
+/* ── Chat message slide ──────────────────────────────────────────── */
+@keyframes messageSlideInRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes messageSlideInLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Typing dots ─────────────────────────────────────────────────── */
+@keyframes typingDot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30%           { transform: translateY(-6px); opacity: 1; }
+}
+
+/* ── Shop item float ─────────────────────────────────────────────── */
+@keyframes shopItemFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+
+/* ── Shimmer loading ─────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ── Birthday ────────────────────────────────────────────────────── */
+@keyframes rainbowText {
+  0%   { color: #FF6B6B; }
+  16%  { color: #FFD93D; }
+  33%  { color: #6BCB77; }
+  50%  { color: #4D96FF; }
+  66%  { color: #9B59B6; }
+  83%  { color: #FF6B9D; }
+  100% { color: #FF6B6B; }
+}
+@keyframes balloonFloat {
+  0%   { opacity: 0; transform: translateY(100vh) rotate(0deg); }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-20vh) rotate(15deg); }
+}
+@keyframes candleFlicker {
+  0%, 100% { transform: scaleY(1) scaleX(1); opacity: 1; }
+  25%      { transform: scaleY(1.1) scaleX(0.9); opacity: 0.85; }
+  50%      { transform: scaleY(0.95) scaleX(1.05); opacity: 0.95; }
+  75%      { transform: scaleY(1.05) scaleX(0.95); opacity: 0.9; }
+}
+
+/* ── Ripple on tap ───────────────────────────────────────────────── */
+@keyframes ripple {
+  0%   { transform: scale(0); opacity: 0.5; }
+  100% { transform: scale(4); opacity: 0; }
+}
+
+/* ── Spinner ─────────────────────────────────────────────────────── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Rotate slow (emerald icon) ──────────────────────────────────── */
+@keyframes rotateSlow {
+  from { transform: rotateY(0deg); }
+  to   { transform: rotateY(360deg); }
+}
+
+/* ── Aurora / nebula background ──────────────────────────────────── */
+@keyframes auroraShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ── Streak fire ─────────────────────────────────────────────────── */
+@keyframes fireFlicker {
+  0%, 100% { text-shadow: 0 0 4px #ff6600, 0 0 8px #ff3300; }
+  50%      { text-shadow: 0 0 8px #ff6600, 0 0 16px #ff3300, 0 0 24px #ff0000; }
+}
+
+/* ── Crafting vortex ─────────────────────────────────────────────── */
+@keyframes vortexSpin {
+  0%   { transform: rotate(0deg) scale(1); }
+  50%  { transform: rotate(180deg) scale(0.5); }
+  100% { transform: rotate(360deg) scale(0); }
+}
+@keyframes craftFlash {
+  0%   { opacity: 0; }
+  50%  { opacity: 1; background: white; }
+  100% { opacity: 0; }
+}
+
+/* ── Nav icon bounce ─────────────────────────────────────────────── */
+@keyframes navBounce {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.3); }
+  70%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+/* ── Achievement banner ──────────────────────────────────────────── */
+@keyframes bannerSlideDown {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  20%  { transform: translateY(0); opacity: 1; }
+  80%  { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-100%); opacity: 0; }
+}

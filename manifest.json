@@ -1,0 +1,19 @@
+{
+  "name": "EmeraldQuest — Homework Adventure",
+  "short_name": "EmeraldQuest",
+  "description": "Turn homework into an adventure! A fun Socratic homework helper with pets, quests, and K-pop Demon Hunters.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#1A1A3E",
+  "background_color": "#1A1A3E",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "games"]
+}

@@ -1,0 +1,90 @@
+/* ==========================================================================
+   EmeraldQuest — Responsive Design (Mobile-First)
+   ========================================================================== */
+
+/* ── Small phones (< 375px) ──────────────────────────────────────── */
+@media (max-width: 374px) {
+  :root {
+    --text-base: 1rem;
+    --text-lg: 1.2rem;
+    --text-xl: 1.5rem;
+    --text-2xl: 1.8rem;
+    --text-3xl: 2.2rem;
+  }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .grid-4 { grid-template-columns: repeat(3, 1fr); }
+  .character-grid { grid-template-columns: repeat(2, 1fr); }
+  .modal { padding: var(--space-md); }
+}
+
+/* ── Default: phones (375px – 599px) ─────────────────────────────── */
+/* Base styles already target this range */
+
+/* ── Tablets (600px+) ────────────────────────────────────────────── */
+@media (min-width: 600px) {
+  .screen { max-width: 560px; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .character-grid { grid-template-columns: repeat(4, 1fr); }
+  .stats-grid { grid-template-columns: repeat(4, 1fr); }
+  .login-screen__profiles { gap: var(--space-xl); }
+  .profile-bubble__avatar { width: 84px; height: 84px; font-size: 2.4rem; }
+}
+
+/* ── Desktop (900px+) ────────────────────────────────────────────── */
+@media (min-width: 900px) {
+  .screen { max-width: 640px; }
+  .nav { max-width: 640px; left: 50%; transform: translateX(-50%); border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0; }
+  .header { max-width: 100%; }
+  .battle-field { padding: var(--space-2xl) 0; }
+  .battle-player__avatar, .battle-demon__avatar { font-size: 5rem; }
+}
+
+/* ── Large desktop (1200px+) ─────────────────────────────────────── */
+@media (min-width: 1200px) {
+  .screen { max-width: 700px; }
+}
+
+/* ── Touch targets — ensure minimum 48px ─────────────────────────── */
+@media (pointer: coarse) {
+  .btn { min-height: 48px; min-width: 48px; }
+  .nav__item { min-height: 48px; min-width: 48px; }
+  .tab { min-height: 44px; }
+  .setup-avatar { width: 60px; height: 60px; }
+  .equip-slot { min-width: 64px; height: 64px; }
+}
+
+/* ── Landscape phones ────────────────────────────────────────────── */
+@media (max-height: 500px) and (orientation: landscape) {
+  :root {
+    --header-height: 44px;
+    --nav-height: 56px;
+  }
+  .loading-screen__logo { font-size: var(--text-2xl); }
+  .character-display { width: 140px; height: 180px; }
+  .battle-player__avatar, .battle-demon__avatar { font-size: 3rem; }
+}
+
+/* ── Reduced motion preference ───────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .pet-card__emoji { animation: none; }
+  .shopkeeper__avatar { animation: none; }
+  .character-display { animation: none; }
+  .header__emerald-icon { animation: none; }
+  .header__emeralds { animation: none; }
+}
+
+/* ── Dark mode is default — light mode override (future) ─────────── */
+/* Currently the app is always dark-themed, matching the space quest aesthetic */
+
+/* ── Print ───────────────────────────────────────────────────────── */
+@media print {
+  .header, .nav, #star-canvas, .modal-backdrop { display: none !important; }
+  body { background: white; color: black; padding: 0; }
+  .screen { max-width: 100%; }
+}

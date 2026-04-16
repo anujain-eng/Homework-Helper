@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1A1A3E">
+  <meta name="description" content="EmeraldQuest — Turn homework into an adventure! A fun Socratic homework helper with pets, quests, and K-pop Demon Hunters.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>EmeraldQuest — Homework Adventure!</title>
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="favicon.svg">
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/screens.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+<!-- Star particle canvas -->
+<canvas id="star-canvas"></canvas>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     HEADER
+     ═══════════════════════════════════════════════════════════════════ -->
+<header class="header hidden" id="app-header">
+  <div class="header__player">
+    <div class="header__avatar" id="header-avatar">🌟</div>
+    <span id="header-player-name">Player</span>
+  </div>
+  <div class="header__emeralds" id="emerald-display">
+    <span class="header__emerald-icon">💎</span>
+    <span class="header__emerald-count" id="emerald-count">0</span>
+  </div>
+  <div class="header__settings" id="btn-settings" title="Settings">⚙️</div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SCREENS
+     ═══════════════════════════════════════════════════════════════════ -->
+
+<!-- Loading Screen -->
+<div class="screen loading-screen active" id="screen-loading">
+  <div class="loading-screen__logo">💎 EmeraldQuest</div>
+  <div class="loading-screen__tagline">Turn homework into an adventure!</div>
+  <div class="spinner"></div>
+</div>
+
+<!-- Login Screen — "Who's Playing?" -->
+<div class="screen login-screen" id="screen-login">
+  <h2>Who's Playing?</h2>
+  <div class="login-screen__profiles" id="login-profiles"></div>
+  <button class="btn btn--secondary" id="btn-add-player">➕ Add New Player</button>
+</div>
+
+<!-- Secret Question Screen -->
+<div class="screen secret-screen" id="screen-secret">
+  <div class="emoji-2xl" id="secret-avatar">🌟</div>
+  <h3 id="secret-player-name">Player</h3>
+  <p id="secret-question-text">Your secret question here?</p>
+  <input class="input-field" type="text" id="secret-answer-input" placeholder="Type your answer..." autocomplete="off">
+  <button class="btn btn--primary btn--block" id="btn-secret-submit">Enter Quest! ⚔️</button>
+  <p class="text-muted" id="secret-error" style="color: var(--coral); display: none;">Hmm, that's not right. Try again!</p>
+</div>
+
+<!-- Setup Screen (New Player) -->
+<div class="screen setup-screen" id="screen-setup">
+  <h2>Create Your Hero!</h2>
+
+  <div class="setup-screen__step">
+    <h4>What's your name?</h4>
+    <input class="input-field" type="text" id="setup-name" placeholder="Enter your name..." maxlength="20">
+  </div>
+
+  <div class="setup-screen__step">
+    <h4>Pick your avatar!</h4>
+    <div class="setup-screen__avatars" id="setup-avatars"></div>
+  </div>
+
+  <div class="setup-screen__step">
+    <h4>Pick a secret question</h4>
+    <select class="select-field" id="setup-question"></select>
+    <input class="input-field" type="text" id="setup-answer" placeholder="Your secret answer..." style="margin-top: var(--space-sm);" autocomplete="off">
+  </div>
+
+  <button class="btn btn--primary btn--large btn--block" id="btn-setup-done">Start My Quest! 🚀</button>
+  <p id="setup-error" style="color: var(--coral); display: none; text-align: center;"></p>
+</div>
+
+<!-- Home / Chat Screen -->
+<div class="screen home-screen" id="screen-home">
+  <div class="home-screen__mode-bar">
+    <div class="mode-chip active" data-mode="hunt" id="mode-hunt">⚔️ Demon Hunt</div>
+    <div class="mode-chip" data-mode="chill" id="mode-chill">😌 Chill Mode</div>
+  </div>
+  <div class="chat-area" id="chat-area">
+    <!-- Chat messages go here -->
+  </div>
+  <div class="typing-indicator hidden" id="typing-indicator">
+    <span></span><span></span><span></span>
+  </div>
+  <div class="chat-input-bar">
+    <button class="btn btn--icon btn--secondary" id="btn-camera" title="Upload homework photo">📸</button>
+    <input type="text" id="chat-input" placeholder="Ask me about your homework..." autocomplete="off">
+    <button class="btn btn--icon btn--primary" id="btn-send" title="Send">➡️</button>
+  </div>
+  <input type="file" id="file-input" accept="image/*" capture="environment" class="hidden">
+</div>
+
+<!-- Character Screen -->
+<div class="screen character-screen" id="screen-character">
+  <h2>My K-pop Demon Hunter</h2>
+  <div class="character-display" id="character-display">
+    <div class="character-display__avatar" id="char-avatar">❓</div>
+    <div class="character-display__name" id="char-name">Not Unlocked</div>
+    <div class="character-display__equipped" id="char-equipped"></div>
+  </div>
+
+  <div id="character-unlock-msg" class="card card--no-hover" style="text-align: center;">
+    <p>🔒 Need <strong>2 💎</strong> to unlock character selection!</p>
+    <p style="font-size: var(--text-sm); color: var(--text-secondary); margin-top: var(--space-xs);">Solve homework questions to earn emeralds!</p>
+  </div>
+
+  <div id="character-selection" class="hidden">
+    <h4>Choose Your Hunter</h4>
+    <div class="character-grid" id="character-grid"></div>
+  </div>
+
+  <div id="character-equip" class="hidden">
+    <div class="equip-section">
+      <h4>👕 Outfit</h4>
+      <div class="equip-slots" id="equip-clothes"></div>
+    </div>
+    <div class="equip-section">
+      <h4>💇 Hair / Wigs</h4>
+      <div class="equip-slots" id="equip-hair"></div>
+    </div>
+    <div class="equip-section">
+      <h4>🐰 Animal Ears</h4>
+      <div class="equip-slots" id="equip-ears"></div>
+    </div>
+    <div class="equip-section">
+      <h4>✨ Accessories</h4>
+      <div class="equip-slots" id="equip-accessories"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Pets Screen -->
+<div class="screen pets-screen" id="screen-pets">
+  <h2>My Pets</h2>
+  <div class="grid-3" id="pets-grid">
+    <!-- Pet cards rendered by JS -->
+  </div>
+  <div id="no-pets-msg" class="card card--no-hover hidden" style="text-align: center;">
+    <p class="emoji-xl">🐾</p>
+    <p>You'll get your first pet when you start your quest!</p>
+  </div>
+</div>
+
+<!-- Shop Screen -->
+<div class="screen shop-screen" id="screen-shop">
+  <div id="shop-locked">
+    <div class="shop-locked">
+      <div class="shop-locked__icon">🔒</div>
+      <h3>Shop Locked!</h3>
+      <p>You need <strong>2 💎</strong> to enter the shop.</p>
+      <p style="font-size: var(--text-sm); color: var(--text-secondary);">Do some homework to earn emeralds!</p>
+    </div>
+  </div>
+  <div id="shop-open" class="hidden">
+    <div class="shopkeeper">
+      <div class="shopkeeper__avatar">🧙‍♂️</div>
+      <div class="shopkeeper__bubble" id="shopkeeper-msg">Welcome, adventurer! Take a look at my wares!</div>
+    </div>
+    <div class="tabs" id="shop-tabs">
+      <div class="tab active" data-tab="fashion">👕 Fashion</div>
+      <div class="tab" data-tab="ears">🐰 Ears</div>
+      <div class="tab" data-tab="pets">🐾 Pets</div>
+      <div class="tab" data-tab="homes">🏠 Homes</div>
+      <div class="tab" data-tab="accessories">✨ Accessories</div>
+    </div>
+    <div class="grid-3" id="shop-items">
+      <!-- Shop items rendered by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- Quest Screen -->
+<div class="screen quest-screen" id="screen-quest">
+  <h2>⚔️ Demon Hunt</h2>
+  <div id="active-quest" class="card card--no-hover hidden">
+    <h4>Current Target</h4>
+    <div style="display:flex; align-items:center; gap:var(--space-md); margin-top:var(--space-sm);">
+      <span class="emoji-lg" id="quest-demon-emoji">👹</span>
+      <div style="flex:1;">
+        <div id="quest-demon-name" style="font-family:var(--font-display);"></div>
+        <div class="hp-bar" style="margin-top:6px;">
+          <div class="hp-bar__fill" id="quest-hp-bar" style="width:100%;"></div>
+        </div>
+        <div id="quest-hp-text" style="font-size:var(--text-xs); color:var(--text-secondary); margin-top:4px;"></div>
+      </div>
+    </div>
+  </div>
+  <h4 style="margin-top: var(--space-md);">Quest Board</h4>
+  <div id="quest-board">
+    <!-- Demon cards rendered by JS -->
+  </div>
+</div>
+
+<!-- Battle Screen (overlay-style) -->
+<div class="screen battle-screen hidden" id="screen-battle">
+  <h3 id="battle-title">Battle!</h3>
+  <div class="battle-field">
+    <div class="battle-player">
+      <div class="battle-player__avatar" id="battle-player-avatar">⚔️</div>
+      <div id="battle-player-name" style="font-family:var(--font-display); font-size:var(--text-sm);"></div>
+    </div>
+    <div class="battle-vs">VS</div>
+    <div class="battle-demon">
+      <div class="battle-demon__avatar" id="battle-demon-avatar">👹</div>
+      <div id="battle-demon-name" style="font-family:var(--font-display); font-size:var(--text-sm);"></div>
+      <div class="hp-bar" style="width:120px;">
+        <div class="hp-bar__fill" id="battle-hp-bar" style="width:100%;"></div>
+      </div>
+    </div>
+  </div>
+  <div id="battle-action-text" style="font-family:var(--font-display); color:var(--gold);"></div>
+</div>
+
+<!-- World / Profile Screen -->
+<div class="screen world-screen" id="screen-world">
+  <h2>My World</h2>
+  <div class="stats-grid" id="stats-grid">
+    <!-- Stats rendered by JS -->
+  </div>
+  <h4 style="margin-top:var(--space-lg);">🏠 Pet Homes</h4>
+  <div class="grid-2" id="homes-grid">
+    <!-- Home cards rendered by JS -->
+  </div>
+  <div id="no-homes-msg" class="card card--no-hover hidden" style="text-align:center;">
+    <p>No homes yet! Buy one from the shop. 🏪</p>
+  </div>
+  <div style="margin-top:var(--space-lg); text-align:center;">
+    <button class="btn btn--ghost btn--small" id="btn-birthday-countdown">🎂 Birthday Countdown</button>
+  </div>
+</div>
+
+<!-- Settings Screen -->
+<div class="screen settings-screen" id="screen-settings">
+  <h2>⚙️ Settings</h2>
+  <div class="settings-group">
+    <h4>🤖 AI Homework Helper</h4>
+    <div class="settings-row">
+      <label>Claude API Key</label>
+      <input class="input-field" type="password" id="settings-api-key" placeholder="sk-ant-...">
+      <span style="font-size:var(--text-xs); color:var(--text-muted);">Get one from console.anthropic.com</span>
+    </div>
+  </div>
+  <div class="settings-group">
+    <h4>💾 Cloud Save (GitHub)</h4>
+    <div class="settings-row">
+      <label>GitHub Token</label>
+      <input class="input-field" type="password" id="settings-github-token" placeholder="ghp_...">
+      <span style="font-size:var(--text-xs); color:var(--text-muted);">Personal access token with repo contents permission</span>
+    </div>
+    <div class="settings-row">
+      <label>Repository</label>
+      <input class="input-field" type="text" id="settings-github-repo" placeholder="username/repo-name" value="anujain-eng/Homework-Helper">
+    </div>
+    <button class="btn btn--primary btn--small" id="btn-save-settings">Save Settings</button>
+    <button class="btn btn--ghost btn--small" id="btn-sync-now" style="margin-top:var(--space-sm);">🔄 Sync Now</button>
+  </div>
+  <div class="settings-group" id="admin-section" style="display:none;">
+    <h4>👑 Admin (Amyra)</h4>
+    <div id="admin-player-list"></div>
+    <button class="btn btn--danger btn--small" id="btn-logout">🚪 Log Out</button>
+  </div>
+  <div class="settings-group">
+    <button class="btn btn--ghost btn--small btn--block" id="btn-logout-nonadmin">🚪 Log Out</button>
+  </div>
+  <div style="text-align:center; margin-top:var(--space-md); color:var(--text-muted); font-size:var(--text-xs);">
+    EmeraldQuest v1.0 — Made with 💎 and ❤️
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     MODALS
+     ═══════════════════════════════════════════════════════════════════ -->
+
+<!-- Purchase Confirmation -->
+<div class="modal-backdrop" id="modal-purchase">
+  <div class="modal">
+    <div class="emoji-xl" id="purchase-emoji">🛒</div>
+    <h3 id="purchase-title">Buy Item?</h3>
+    <p id="purchase-desc"></p>
+    <p id="purchase-price" style="color:var(--emerald); font-family:var(--font-display); margin-top:var(--space-sm);"></p>
+    <div class="modal__actions">
+      <button class="btn btn--ghost" id="btn-purchase-cancel">Cancel</button>
+      <button class="btn btn--primary" id="btn-purchase-confirm">Buy! 💎</button>
+    </div>
+  </div>
+</div>
+
+<!-- Pet Rename -->
+<div class="modal-backdrop" id="modal-rename">
+  <div class="modal">
+    <div class="emoji-xl" id="rename-emoji">🐾</div>
+    <h3>Rename Pet</h3>
+    <input class="input-field" type="text" id="rename-input" placeholder="New name..." maxlength="20" style="margin-top:var(--space-md);">
+    <div class="modal__actions">
+      <button class="btn btn--ghost" id="btn-rename-cancel">Cancel</button>
+      <button class="btn btn--primary" id="btn-rename-confirm">Rename!</button>
+    </div>
+  </div>
+</div>
+
+<!-- Emerald Reward -->
+<div class="modal-backdrop" id="modal-reward">
+  <div class="modal">
+    <div class="emoji-2xl">💎</div>
+    <h3 style="color:var(--emerald);" id="reward-title">Emeralds Earned!</h3>
+    <p id="reward-amount" style="font-family:var(--font-display); font-size:var(--text-2xl); color:var(--emerald);"></p>
+    <p id="reward-reason" style="color:var(--text-secondary);"></p>
+    <div class="modal__actions">
+      <button class="btn btn--primary" id="btn-reward-close">Awesome! ✨</button>
+    </div>
+  </div>
+</div>
+
+<!-- Victory Modal -->
+<div class="modal-backdrop" id="modal-victory">
+  <div class="modal">
+    <div class="emoji-2xl" id="victory-char">⚔️</div>
+    <h3 style="color:var(--gold);">VICTORY!</h3>
+    <p id="victory-demon-name" style="font-family:var(--font-display);"></p>
+    <div id="victory-loot" style="display:flex; justify-content:center; gap:var(--space-md); margin-top:var(--space-md); font-size:1.5rem;"></div>
+    <p id="victory-emeralds" style="color:var(--emerald); font-family:var(--font-display); font-size:var(--text-xl);"></p>
+    <div class="modal__actions">
+      <button class="btn btn--gold" id="btn-victory-close">Collect Loot! 🎉</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     BOTTOM NAVIGATION
+     ═══════════════════════════════════════════════════════════════════ -->
+<nav class="nav hidden" id="app-nav">
+  <div class="nav__item active" data-screen="home">
+    <span class="nav__icon">🏠</span>
+    <span class="nav__label">Home</span>
+  </div>
+  <div class="nav__item" data-screen="quest">
+    <span class="nav__icon">⚔️</span>
+    <span class="nav__label">Quests</span>
+  </div>
+  <div class="nav__item" data-screen="character">
+    <span class="nav__icon">💃</span>
+    <span class="nav__label">Hero</span>
+  </div>
+  <div class="nav__item" data-screen="pets">
+    <span class="nav__icon">🐾</span>
+    <span class="nav__label">Pets</span>
+  </div>
+  <div class="nav__item" data-screen="shop">
+    <span class="nav__icon">🛒</span>
+    <span class="nav__label">Shop</span>
+  </div>
+  <div class="nav__item" data-screen="world">
+    <span class="nav__icon">🌍</span>
+    <span class="nav__label">World</span>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     JAVASCRIPT — loaded in order, all share global scope
+     ═══════════════════════════════════════════════════════════════════ -->
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/state.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/router.js"></script>
+<script src="js/effects.js"></script>
+<script src="js/emeralds.js"></script>
+<script src="js/api.js"></script>
+<script src="js/chat.js"></script>
+<script src="js/characters.js"></script>
+<script src="js/pets.js"></script>
+<script src="js/shop.js"></script>
+<script src="js/quests.js"></script>
+<script src="js/battle.js"></script>
+<script src="js/app.js"></script>
+
+<!-- Register service worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+</script>
+</body>
+</html>
