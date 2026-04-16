@@ -71,7 +71,7 @@ async function sendToClaude(userMessage, imageBase64 = null) {
   }
 
   const player = getCurrentPlayer();
-  const chatHistory = player ? player.chatHistory.slice(-10) : [];
+  const chatHistory = player ? player.chatHistory.slice(-20) : [];
 
   // Build messages array
   const messages = [];
@@ -151,7 +151,7 @@ async function sendToClaude(userMessage, imageBase64 = null) {
       player.chatHistory.push({ role: 'assistant', content: assistantText });
       // Keep history manageable (fewer entries when images are stored)
       if (player.chatHistory.length > 14) {
-        player.chatHistory = player.chatHistory.slice(-14);
+        player.chatHistory = player.chatHistory.slice(-24);
       }
       saveState();
     }
