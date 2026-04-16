@@ -33,8 +33,9 @@ SOCRATIC METHOD — THIS IS THE MOST IMPORTANT PART:
 
 WHEN THE STUDENT SOLVES THE PROBLEM:
 - Celebrate with excitement ("AMAZING! You got it! 🎉")
-- At the very end of your response, include exactly this JSON on its own line: {"solved": true}
-- This signals the app to award emeralds
+- You MUST include this EXACT text at the very end of your response on its own line: {"solved": true}
+- This is REQUIRED — without it, the student does NOT receive their emerald reward!
+- Do NOT forget this. EVERY time the student reaches the correct final answer, end with {"solved": true}
 
 SUBJECT EXPERTISE (RSM Grade 2 Advanced):
 - Multi-step word problems (distance, weight, comparison puzzles)
@@ -136,12 +137,15 @@ async function sendToClaude(userMessage, imageBase64 = null) {
 
 // ── Check if response indicates problem was solved ───────────────────
 function checkIfSolved(responseText) {
-  return responseText.includes('{"solved": true}') || responseText.includes('{"solved":true}');
+  return responseText.includes('{"solved": true}')
+    || responseText.includes('{"solved":true}')
+    || responseText.includes('"solved": true')
+    || responseText.includes('"solved":true');
 }
 
 // ── Clean solved marker from display text ────────────────────────────
 function cleanResponseText(text) {
-  return text.replace(/\{"solved"\s*:\s*true\}/g, '').trim();
+  return text.replace(/\{?\s*"solved"\s*:\s*true\s*\}?/g, '').trim();
 }
 
 // ── Fallback response (no API key) ───────────────────────────────────
