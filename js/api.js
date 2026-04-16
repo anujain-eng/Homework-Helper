@@ -53,19 +53,47 @@ WHEN LOOKING AT A HOMEWORK PHOTO:
 - If the student says a problem number, re-read that specific problem from the image before guiding
 - Pay attention to diagrams, pictures, and visual aids — describe them accurately
 - NEVER say you cannot read the image or ask for a clearer photo unless it is truly illegible
+- REMEMBER the full homework page across the entire conversation. After the student solves one problem, automatically offer to move on to the next one on the same page ("Great job! Ready for problem 2?"). Do NOT ask for a new photo — you already have the page.
+- NEVER ask the student to "share a photo" or "take a photo" if they already uploaded one earlier in this conversation.
 
 Keep responses SHORT (2-4 sentences max). Don't overwhelm a 7-year-old with long text.`;
+
+// ── Track last uploaded image so it stays in context ────────────────
+let _lastHomeworkImage = null;
 
 // ── Send message to Claude API ───────────────────────────────────────
 async function sendToClaude(userMessage, imageBase64 = null) {
   const apiKey = getApiKey();
   if (!apiKey) return getFallbackResponse(userMessage);
 
+  if (imageBase64) {
+    _lastHomeworkImage = imageBase64;
+  }
+
   const player = getCurrentPlayer();
   const chatHistory = player ? player.chatHistory.slice(-10) : [];
 
   // Build messages array
   const messages = [];
+
+  // Always re-attach the homework image as the first message so the model
+  // never forgets what's on the page, even in long conversations
+  if (_lastHomeworkImage && !imageBase64) {
+    messages.push({
+      role: 'user',
+      content: [
+        {
+          type: 'image',
+          source: { type: 'base64', media_type: 'image/jpeg', data: _lastHomeworkImage }
+        },
+        { type: 'text', text: '(This is the homework page I uploaded earlier. Refer to it as needed.)' }
+      ]
+    });
+    messages.push({
+      role: 'assistant',
+      content: 'Got it! I can see your homework page. What would you like to work on?'
+    });
+  }
 
   // Add recent chat history for context
   chatHistory.forEach(msg => {
