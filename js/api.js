@@ -150,14 +150,17 @@ async function sendToClaude(userMessage, imageBase64 = null) {
       }
       player.chatHistory.push({ role: 'assistant', content: assistantText });
 
-      // Track conversation stats for analysis
+      // Track conversation length per homework page
       if (!player.chatStats) player.chatStats = [];
-      const sessionDate = new Date().toISOString().split('T')[0];
-      const lastStat = player.chatStats[player.chatStats.length - 1];
-      if (lastStat && lastStat.date === sessionDate) {
-        lastStat.messages = player.chatHistory.length;
-      } else {
-        player.chatStats.push({ date: sessionDate, messages: player.chatHistory.length });
+      if (!player._currentPageId) player._currentPageId = null;
+
+      // New image upload = new page session
+      if (imageBase64) {
+        player._currentPageId = Date.now();
+        player.chatStats.push({ pageId: player._currentPageId, start: new Date().toISOString(), messages: 1 });
+      } else if (player._currentPageId) {
+        const current = player.chatStats.find(s => s.pageId === player._currentPageId);
+        if (current) current.messages++;
       }
 
       saveState();
