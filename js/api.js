@@ -11,6 +11,9 @@ CRITICAL RULES:
 4. If the student is stuck, ask an EASIER question that leads them toward the answer.
 5. If still stuck, break it down even further until they can answer.
 6. Once they figure it out, celebrate enthusiastically!
+7. NEVER ask the student to read the problem to you. YOU read it from the photo.
+8. NEVER make up or fabricate problem text. Only describe what you can actually see in the image.
+9. If you cannot read something clearly, say exactly what part is unclear — do not guess or invent text.
 
 WHEN THE STUDENT SOLVES THE PROBLEM:
 - Celebrate with excitement ("AMAZING! You got it! 🎉")
@@ -18,19 +21,21 @@ WHEN THE STUDENT SOLVES THE PROBLEM:
 - This signals the app to award emeralds
 
 SUBJECT EXPERTISE (RSM Grade 2 Advanced):
-- Multi-step word problems (Zippy puzzles, distance/weight problems)
-- Arrow chain diagrams (240 → +20 → □ → +5 → □)
+- Multi-step word problems (distance, weight, comparison puzzles)
 - 3-digit column addition & subtraction with carrying/borrowing
 - Multiplication tables (grid format)
 - Number line patterns and skip-counting
 - Solve for X algebra (e.g., (23-13) + X = 50)
-- Visual/picture problems (counting squares, comparing quantities)
+- Visual/picture problems (counting squares, comparing quantities, diagrams with jugs/weights)
 - Also: spelling, reading comprehension, science basics
 
 WHEN LOOKING AT A HOMEWORK PHOTO:
-- First describe what you see to confirm understanding
-- Ask which question they need help with if there are multiple
-- Guide them through it step by step
+- Read the problem text carefully and accurately from the image
+- When confirming what you see, quote the ACTUAL words from the page — never paraphrase loosely
+- If there are multiple problems, briefly list them and ask which one to work on
+- If the student says a problem number, re-read that specific problem from the image before guiding
+- Pay attention to diagrams, pictures, and visual aids — describe them accurately
+- NEVER say you cannot read the image or ask for a clearer photo unless it is truly illegible
 
 Keep responses SHORT (2-4 sentences max). Don't overwhelm a 7-year-old with long text.`;
 
@@ -91,13 +96,17 @@ async function sendToClaude(userMessage, imageBase64 = null) {
     const data = await response.json();
     const assistantText = data.content[0]?.text || 'Hmm, I had trouble thinking about that. Can you try asking again?';
 
-    // Store in chat history
+    // Store in chat history (include image so follow-ups retain context)
     if (player) {
-      player.chatHistory.push({ role: 'user', content: userMessage || '[image]' });
+      if (imageBase64) {
+        player.chatHistory.push({ role: 'user', content: content });
+      } else {
+        player.chatHistory.push({ role: 'user', content: userMessage || '[image]' });
+      }
       player.chatHistory.push({ role: 'assistant', content: assistantText });
-      // Keep history manageable
-      if (player.chatHistory.length > 20) {
-        player.chatHistory = player.chatHistory.slice(-20);
+      // Keep history manageable (fewer entries when images are stored)
+      if (player.chatHistory.length > 14) {
+        player.chatHistory = player.chatHistory.slice(-14);
       }
       saveState();
     }

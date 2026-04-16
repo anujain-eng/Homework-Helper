@@ -8,7 +8,7 @@ const CONFIG = {
 
   // Claude API
   API_URL: 'https://api.anthropic.com/v1/messages',
-  API_MODEL: 'claude-haiku-4-5-20251001',
+  API_MODEL: 'claude-sonnet-4-6',
   API_MAX_TOKENS: 1024,
 
   // GitHub API (save data)
