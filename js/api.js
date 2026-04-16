@@ -71,7 +71,7 @@ async function sendToClaude(userMessage, imageBase64 = null) {
   }
 
   const player = getCurrentPlayer();
-  const chatHistory = player ? player.chatHistory.slice(-50) : [];
+  const chatHistory = player ? player.chatHistory : [];
 
   // Build messages array
   const messages = [];
@@ -149,10 +149,17 @@ async function sendToClaude(userMessage, imageBase64 = null) {
         player.chatHistory.push({ role: 'user', content: userMessage || '[image]' });
       }
       player.chatHistory.push({ role: 'assistant', content: assistantText });
-      // Keep history manageable (fewer entries when images are stored)
-      if (player.chatHistory.length > 14) {
-        player.chatHistory = player.chatHistory.slice(-60);
+
+      // Track conversation stats for analysis
+      if (!player.chatStats) player.chatStats = [];
+      const sessionDate = new Date().toISOString().split('T')[0];
+      const lastStat = player.chatStats[player.chatStats.length - 1];
+      if (lastStat && lastStat.date === sessionDate) {
+        lastStat.messages = player.chatHistory.length;
+      } else {
+        player.chatStats.push({ date: sessionDate, messages: player.chatHistory.length });
       }
+
       saveState();
     }
 

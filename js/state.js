@@ -31,7 +31,8 @@ function createDefaultPlayerData(name, avatar, question, answer) {
     questionsCompleted: 0,
     lastLogin: new Date().toISOString().split('T')[0],
     birthdayBonusClaimed: '',
-    chatHistory: []
+    chatHistory: [],
+    chatStats: []
   };
 }
 
