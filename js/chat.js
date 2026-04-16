@@ -3,6 +3,8 @@
 // ==========================================================================
 
 let _hintCount = 0;
+let _problemActive = false;
+let _problemSolved = false;
 let _pendingImage = null;
 
 // ── Render home screen ───────────────────────────────────────────────
@@ -73,7 +75,21 @@ async function handleSendMessage() {
   // Send to Claude
   const response = await sendToClaude(text, _pendingImage);
   _pendingImage = null;
-  _hintCount++;
+
+  // Only count hints for real problem-solving exchanges:
+  // - Skip problem selection ("1", "2", "3", "problem 2", etc.)
+  // - Skip messages after the problem is already solved (explaining reasoning)
+  // - Skip photo uploads with no real answer
+  const isSelection = /^\s*\d\s*$/.test(text) || /^(problem|question|number)\s*\d/i.test(text);
+  const isPhotoOnly = !text || text === '📸 Help me with this!';
+
+  if (!isSelection && !isPhotoOnly && !_problemSolved) {
+    if (_problemActive) {
+      _hintCount++;
+    } else {
+      _problemActive = true;
+    }
+  }
 
   // Hide typing indicator
   typing.classList.add('hidden');
@@ -86,6 +102,7 @@ async function handleSendMessage() {
   addChatMessage(cleanText, 'tutor');
 
   if (solved) {
+    _problemSolved = true;
     onProblemSolved();
   }
 }
@@ -105,14 +122,16 @@ function onProblemSolved() {
   if (player.questMode === 'hunt' && player.activeDemon) {
     const isCritical = _hintCount <= 1;
     triggerBattleAnimation(isCritical, () => {
-      addEmeralds(reward, `Solved it with ${_hintCount} hint${_hintCount !== 1 ? 's' : ''}! 🎉`);
+      addEmeralds(reward, _hintCount === 0 ? 'Solved it with NO hints! 🎉' : `Solved it with ${_hintCount} hint${_hintCount !== 1 ? 's' : ''}! 🎉`);
     });
   } else {
-    addEmeralds(reward, `Solved it with ${_hintCount} hint${_hintCount !== 1 ? 's' : ''}! 🎉`);
+    addEmeralds(reward, _hintCount === 0 ? 'Solved it with NO hints! 🎉' : `Solved it with ${_hintCount} hint${_hintCount !== 1 ? 's' : ''}! 🎉`);
   }
 
-  // Reset hint counter for next problem
+  // Reset for next problem
   _hintCount = 0;
+  _problemActive = false;
+  _problemSolved = false;
 }
 
 // ── Handle image upload ──────────────────────────────────────────────
