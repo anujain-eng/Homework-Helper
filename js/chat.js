@@ -116,32 +116,14 @@ async function handleSendMessage() {
 
   typing.classList.add('hidden');
 
-  // Parse status signal for deterministic hint counting
-  const signal = parseStatusSignal(response);
-
-  if (signal) {
-    switch (signal.status) {
-      case 'asking':
-        _problemActive = true;
-        _hintCount = 0;
-        if (signal.problem !== undefined) _currentProblemIndex = signal.problem - 1;
-        break;
-      case 'hinting':
-        _problemActive = true;
-        _hintCount = signal.hint || (_hintCount + 1);
-        break;
-      case 'solved':
-        _problemSolved = true;
-        break;
-      case 'navigating':
-        _hintCount = 0;
-        _problemActive = false;
-        break;
-    }
+  // Check if the problem was solved
+  const solved = checkIfSolved(response);
+  if (solved) {
+    _problemSolved = true;
+  } else if (_problemActive) {
+    _hintCount++;
   } else {
-    // Fallback for text-only mode (no status signals)
-    const solved = checkIfSolved(response);
-    if (solved) _problemSolved = true;
+    _problemActive = true;
   }
 
   const cleanText = cleanResponseText(response);
