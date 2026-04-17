@@ -12,6 +12,7 @@ let _currentPageData = null;
 let _currentProblemIndex = 0;
 let _escalationCount = 0;
 let _lastHomeworkImage = localStorage.getItem('eq_last_image') || null;
+let _phase1Error = null;
 
 try {
   const saved = sessionStorage.getItem('eq_page_data');
@@ -108,16 +109,12 @@ async function runPhase1(imageBase64) {
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
-        'anthropic-version': CONFIG.API_VERSION_PHASE1,
+        'anthropic-version': '2023-06-01',
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
         model: CONFIG.API_MODEL_PHASE1,
         max_tokens: CONFIG.API_MAX_TOKENS_PHASE1,
-        thinking: {
-          type: 'enabled',
-          budget_tokens: CONFIG.API_THINKING_BUDGET
-        },
         system: PHASE1_PROMPT,
         messages: [{
           role: 'user',
@@ -154,6 +151,7 @@ async function runPhase1(imageBase64) {
     return result;
   } catch (error) {
     console.error('Phase 1 error:', error);
+    _phase1Error = error.message || String(error);
     return null;
   }
 }
@@ -341,8 +339,9 @@ async function sendToClaude(userMessage, imageBase64 = null) {
       saveState();
     }
 
+    _phase1Error = null;
     const pageData = await runPhase1(imageBase64);
-    if (!pageData) return "I had trouble reading your homework page. Can you try uploading the photo again?";
+    if (!pageData) return `I had trouble reading your homework page. ${_phase1Error ? '(' + _phase1Error + ')' : ''} Can you try uploading the photo again?`;
 
     return await sendToTutor(userMessage || 'Help me with this homework!');
   }
