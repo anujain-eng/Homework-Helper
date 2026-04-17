@@ -71,21 +71,55 @@ function showAnswerKey(pageData) {
   var content = document.getElementById('answer-key-content');
   content.innerHTML = '';
 
+  function addSection(parent, label, text, color) {
+    if (!text) return;
+    var row = document.createElement('div');
+    row.style.cssText = 'margin:4px 0;';
+    row.innerHTML = '<span style="color:' + (color || 'var(--text-muted)') + ';font-weight:bold;font-size:11px;text-transform:uppercase;">' + label + '</span>';
+    var val = document.createElement('div');
+    val.style.cssText = 'color:var(--text-secondary);margin-left:8px;font-size:13px;';
+    val.textContent = text;
+    row.appendChild(val);
+    parent.appendChild(row);
+  }
+
   if (pageData.pageDescription) {
-    var desc = document.createElement('p');
-    desc.style.cssText = 'color:var(--text-muted);margin-bottom:12px;';
-    desc.textContent = pageData.pageDescription;
-    content.appendChild(desc);
+    addSection(content, 'Page', pageData.pageDescription, 'var(--lavender)');
+  }
+  if (pageData.pageContext) {
+    addSection(content, 'Context', pageData.pageContext, 'var(--lavender)');
   }
 
   pageData.problems.forEach(function(p, i) {
     var item = document.createElement('div');
-    item.style.cssText = 'padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.08);';
-    var num = '#' + (p.id || i + 1);
-    var text = p.problemText.length > 80 ? p.problemText.substring(0, 80) + '...' : p.problemText;
-    item.innerHTML = '<div style="color:var(--emerald);font-weight:bold;">' + num + '</div>' +
-      '<div style="color:var(--text-secondary);margin:4px 0;">' + text + '</div>' +
-      '<div style="color:var(--gold);">Answer: ' + p.answer + '</div>';
+    item.style.cssText = 'padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.1);';
+
+    var header = document.createElement('div');
+    header.style.cssText = 'color:var(--emerald);font-weight:bold;font-size:15px;margin-bottom:6px;';
+    header.textContent = '#' + (p.id || i + 1) + ' ' + (p.problemType || '');
+    item.appendChild(header);
+
+    addSection(item, 'Problem', p.problemText, 'var(--cyan)');
+    addSection(item, 'Answer', p.answer, 'var(--gold)');
+
+    if (p.solutionSteps && p.solutionSteps.length) {
+      addSection(item, 'Steps', p.solutionSteps.join(' → '), 'var(--emerald)');
+    }
+    addSection(item, 'Visuals', p.visualContext || p.visualDescription, 'var(--pink)');
+    addSection(item, 'Student Work', p.studentWorkVisible, 'var(--coral)');
+    addSection(item, 'Concepts', p.conceptsTested ? p.conceptsTested.join(', ') : null, 'var(--lavender)');
+    addSection(item, 'How to Present', p.presentationGuide, 'var(--neon-blue)');
+    addSection(item, 'Scaffolding', p.scaffoldingStrategy, 'var(--soft-purple)');
+    addSection(item, 'Kid Reframe', p.kidFriendlyReframe, 'var(--pink)');
+    addSection(item, 'Connects To', p.connectsTo, 'var(--text-muted)');
+
+    if (p.commonMistakes && p.commonMistakes.length) {
+      var mistakes = p.commonMistakes.map(function(m) {
+        return m.wrong + ' — ' + m.reason;
+      }).join('; ');
+      addSection(item, 'Common Mistakes', mistakes, 'var(--coral)');
+    }
+
     content.appendChild(item);
   });
 }
