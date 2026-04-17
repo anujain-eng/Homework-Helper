@@ -65,46 +65,29 @@ function addChatMessage(text, sender, imageUrl = null) {
 function showAnswerKey(pageData) {
   if (!pageData || !pageData.problems || pageData.problems.length === 0) return;
 
-  const chatArea = document.getElementById('chat-area');
-  const container = document.createElement('div');
-  container.className = 'answer-key';
+  var btn = document.getElementById('btn-answer-key');
+  btn.style.display = 'inline-block';
 
-  const toggle = document.createElement('button');
-  toggle.className = 'answer-key__toggle';
-  toggle.innerHTML = '<span>\uD83D\uDCCB Answer Key (' + pageData.problems.length + ' problem' + (pageData.problems.length !== 1 ? 's' : '') + ' found)</span><span class="answer-key__arrow">\u25B6</span>';
-  toggle.addEventListener('click', function() { container.classList.toggle('open'); });
-
-  const body = document.createElement('div');
-  body.className = 'answer-key__body';
+  var content = document.getElementById('answer-key-content');
+  content.innerHTML = '';
 
   if (pageData.pageDescription) {
-    const desc = document.createElement('div');
-    desc.className = 'answer-key__problem';
+    var desc = document.createElement('p');
+    desc.style.cssText = 'color:var(--text-muted);margin-bottom:12px;';
     desc.textContent = pageData.pageDescription;
-    body.appendChild(desc);
+    content.appendChild(desc);
   }
 
   pageData.problems.forEach(function(p, i) {
-    const row = document.createElement('div');
-    row.className = 'answer-key__problem';
-    const label = p.problemText.length > 60 ? p.problemText.substring(0, 60) + '...' : p.problemText;
-    const num = document.createElement('span');
-    num.className = 'answer-key__problem-num';
-    num.textContent = '#' + (p.id || i + 1) + ' ';
-    const ans = document.createElement('span');
-    ans.className = 'answer-key__answer';
-    ans.textContent = 'Answer: ' + p.answer;
-    row.appendChild(num);
-    row.appendChild(document.createTextNode(label));
-    row.appendChild(document.createElement('br'));
-    row.appendChild(ans);
-    body.appendChild(row);
+    var item = document.createElement('div');
+    item.style.cssText = 'padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.08);';
+    var num = '#' + (p.id || i + 1);
+    var text = p.problemText.length > 80 ? p.problemText.substring(0, 80) + '...' : p.problemText;
+    item.innerHTML = '<div style="color:var(--emerald);font-weight:bold;">' + num + '</div>' +
+      '<div style="color:var(--text-secondary);margin:4px 0;">' + text + '</div>' +
+      '<div style="color:var(--gold);">Answer: ' + p.answer + '</div>';
+    content.appendChild(item);
   });
-
-  container.appendChild(toggle);
-  container.appendChild(body);
-  chatArea.appendChild(container);
-  chatArea.scrollTop = chatArea.scrollHeight;
 }
 
 async function handleSendMessage() {
@@ -246,6 +229,16 @@ function initChat() {
       handleImageUpload(e.target.files[0]);
       e.target.value = '';
     }
+  });
+
+  document.getElementById('btn-answer-key').addEventListener('click', () => {
+    document.getElementById('modal-answer-key').style.display = 'flex';
+  });
+  document.getElementById('btn-answer-key-close').addEventListener('click', () => {
+    document.getElementById('modal-answer-key').style.display = 'none';
+  });
+  document.getElementById('modal-answer-key').addEventListener('click', (e) => {
+    if (e.target.id === 'modal-answer-key') e.target.style.display = 'none';
   });
 
   document.getElementById('mode-hunt').addEventListener('click', () => {

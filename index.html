@@ -43,7 +43,8 @@
     <span class="header__emerald-icon">💎</span>
     <span class="header__emerald-count" id="emerald-count">0</span>
   </div>
-  <div style="font-size:14px;font-weight:bold;color:rgba(255,255,255,0.5);">v13</div>
+  <div style="font-size:14px;font-weight:bold;color:rgba(255,255,255,0.5);">v14</div>
+  <button id="btn-answer-key" title="Answer Key" style="display:none;background:none;border:1px solid var(--emerald);border-radius:8px;color:var(--emerald);font-size:12px;padding:4px 8px;cursor:pointer;">📋</button>
   <div class="header__settings" id="btn-settings" title="Settings">⚙️</div>
 </header>
 
@@ -56,7 +57,7 @@
   <div class="loading-screen__logo">💎 EmeraldQuest</div>
   <div class="loading-screen__tagline">Turn homework into an adventure!</div>
   <div class="spinner"></div>
-  <div style="position:absolute;bottom:10px;font-size:10px;color:rgba(255,255,255,0.3);">v13</div>
+  <div style="position:absolute;bottom:10px;font-size:10px;color:rgba(255,255,255,0.3);">v14</div>
 </div>
 
 <!-- Login Screen — "Who's Playing?" -->
@@ -351,6 +352,17 @@
     <p id="victory-emeralds" style="color:var(--emerald); font-family:var(--font-display); font-size:var(--text-xl);"></p>
     <div class="modal__actions">
       <button class="btn btn--gold" id="btn-victory-close">Collect Loot! 🎉</button>
+    </div>
+  </div>
+</div>
+
+<!-- Answer Key (parent verification) -->
+<div class="modal-backdrop" id="modal-answer-key" style="display:none;">
+  <div class="modal" style="max-height:80vh;overflow-y:auto;text-align:left;">
+    <h3 style="text-align:center;">📋 Answer Key</h3>
+    <div id="answer-key-content" style="margin-top:var(--space-md);font-size:var(--text-sm);"></div>
+    <div class="modal__actions">
+      <button class="btn btn--ghost" id="btn-answer-key-close">Close</button>
     </div>
   </div>
 </div>
