@@ -62,11 +62,57 @@ function addChatMessage(text, sender, imageUrl = null) {
 }
 
 // ── Send message ─────────────────────────────────────────────────────
+function showAnswerKey(pageData) {
+  if (!pageData || !pageData.problems || pageData.problems.length === 0) return;
+
+  const chatArea = document.getElementById('chat-area');
+  const container = document.createElement('div');
+  container.className = 'answer-key';
+
+  const toggle = document.createElement('button');
+  toggle.className = 'answer-key__toggle';
+  toggle.innerHTML = '<span>\uD83D\uDCCB Answer Key (' + pageData.problems.length + ' problem' + (pageData.problems.length !== 1 ? 's' : '') + ' found)</span><span class="answer-key__arrow">\u25B6</span>';
+  toggle.addEventListener('click', function() { container.classList.toggle('open'); });
+
+  const body = document.createElement('div');
+  body.className = 'answer-key__body';
+
+  if (pageData.pageDescription) {
+    const desc = document.createElement('div');
+    desc.className = 'answer-key__problem';
+    desc.textContent = pageData.pageDescription;
+    body.appendChild(desc);
+  }
+
+  pageData.problems.forEach(function(p, i) {
+    const row = document.createElement('div');
+    row.className = 'answer-key__problem';
+    const label = p.problemText.length > 60 ? p.problemText.substring(0, 60) + '...' : p.problemText;
+    const num = document.createElement('span');
+    num.className = 'answer-key__problem-num';
+    num.textContent = '#' + (p.id || i + 1) + ' ';
+    const ans = document.createElement('span');
+    ans.className = 'answer-key__answer';
+    ans.textContent = 'Answer: ' + p.answer;
+    row.appendChild(num);
+    row.appendChild(document.createTextNode(label));
+    row.appendChild(document.createElement('br'));
+    row.appendChild(ans);
+    body.appendChild(row);
+  });
+
+  container.appendChild(toggle);
+  container.appendChild(body);
+  chatArea.appendChild(container);
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
 async function handleSendMessage() {
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if (!text && !_pendingImage) return;
 
+  const hadImage = !!_pendingImage;
   let imageUrl = null;
   if (_pendingImage) {
     imageUrl = `data:image/jpeg;base64,${_pendingImage}`;
@@ -115,6 +161,11 @@ async function handleSendMessage() {
   _pendingImage = null;
 
   typing.classList.add('hidden');
+
+  if (hadImage) {
+    const extractedData = getCurrentPageData();
+    if (extractedData) showAnswerKey(extractedData);
+  }
 
   // Check if the problem was solved
   const solved = checkIfSolved(response);
