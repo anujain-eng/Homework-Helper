@@ -193,9 +193,6 @@ function getDemonById(id) {
   return DEMONS.find(d => d.id === id);
 }
 
-// ── Track current problem index for escalation ───────────────────────
-let _currentProblemIndex = 0;
-
 // ── Init chat event listeners ────────────────────────────────────────
 function initChat() {
   document.getElementById('btn-send').addEventListener('click', handleSendMessage);
