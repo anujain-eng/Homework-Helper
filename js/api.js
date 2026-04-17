@@ -29,12 +29,7 @@ STEP 2: EXTRACT AND SOLVE EVERY PROBLEM
 For each problem, solve it with full step-by-step work. Double-check all arithmetic. Be thorough.
 
 STEP 3: ENRICH EACH PROBLEM FOR A SOCRATIC TUTOR
-For each problem, provide everything a tutor needs to guide (not tell) the student:
-- How to introduce the problem in a fun, age-appropriate way
-- What concepts are being tested
-- A scaffolding strategy: if the student is stuck, what APPROACH should the tutor take? (not scripted hints — a strategy like "guide them to draw a picture" or "ask them to retell the story in their own words")
-- Kid-friendly reframing: a simpler way to think about the problem
-- What the student might already know that connects to this problem
+For each problem, put yourself in the shoes of a tutor coaching a 7-year-old. Provide everything that tutor would need to help the student discover the answer themselves — without ever telling them.
 
 CRITICAL:
 - Solve every problem CORRECTLY. Verify arithmetic column by column.
@@ -58,16 +53,16 @@ JSON SCHEMA:
       "answerNumeric": 42,
       "acceptableAnswers": ["42", "42 units", ...],
       "solutionSteps": ["Step 1: ...", "Step 2: ...", "Step 3: ..."],
-      "visualContext": "Rich description of any diagrams, pictures, icons, arrows, grids associated with THIS problem. Include spatial layout, colors, labels. Null if no visuals.",
-      "studentWorkVisible": "Description of any handwriting/answers the student has already written for this problem, or null if blank",
-      "conceptsTested": ["working backwards", "understanding halves", "multi-step reasoning"],
-      "presentationGuide": "How the tutor should introduce this problem. Example: 'Ask the student to read the problem out loud and retell the Zippy story in their own words before trying to solve it.'",
-      "scaffoldingStrategy": "If stuck, what approach should the tutor take? Example: 'Guide them to picture the story from top (plane) to bottom (ground). Ask what happens at each stage. Do NOT mention specific numbers — let them find the numbers in the problem.'",
-      "kidFriendlyReframe": "A simpler way to think about it. Example: 'It is like a building — Zippy starts at the top floor, falls halfway down, then falls a bit more before his parachute catches him.'",
+      "visualContext": "Rich description of any diagrams, pictures, icons, arrows, grids associated with this problem. Include spatial layout, colors, labels. Null if no visuals.",
+      "studentWorkVisible": "Description of any handwriting or answers the student has already written for this problem, or null if blank",
+      "conceptsTested": ["concept1", "concept2"],
+      "presentationGuide": "A mathematical entry point — what should the tutor ask or highlight first to get the student thinking in the right direction?",
+      "scaffoldingStrategy": "If the student is stuck, what approach should a tutor take to coach this young mind toward the answer? Not scripted hints — a strategic approach.",
+      "kidFriendlyReframe": "A simpler, relatable way for a 7-year-old to think about this problem",
       "commonMistakes": [
-        {"wrong": "35", "reason": "Forgot the second part", "tutorResponse": "Hmm, I think you might be missing a step. Can you re-read the problem and find ALL the clues?"}
+        {"wrong": "incorrect answer", "reason": "why a student might get this", "tutorResponse": "what the tutor should say to redirect without giving the answer"}
       ],
-      "connectsTo": "What the student already knows that helps here. Example: 'They know what half means from fractions work. They can add 3-digit numbers.'"
+      "connectsTo": "What the student already knows from prior lessons that connects to this problem"
     }
   ]
 }
