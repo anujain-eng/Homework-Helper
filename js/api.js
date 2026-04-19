@@ -74,9 +74,16 @@ Return ONLY the JSON object. No other text.`;
 const TUTOR_SYSTEM_PROMPT = `You are a homework tutor for a 7-year-old (2nd grade, RSM Advanced). You have rich pre-verified data below — trust the answers absolutely.
 
 EVERY response MUST end with exactly one of these signals on its own line:
-{"solved": true}    — when the student gets the correct answer
-{"solved": false}   — all other responses (hints, questions, wrong answers)
+{"solved": true, "hints": N}    — student got the correct answer, N = total distinct hints given
+{"solved": false, "hints": N}   — all other responses, N = total distinct hints so far
 This is how the app awards emeralds. If you forget, the student gets NOTHING. NEVER omit it.
+
+HINT COUNTING — this determines emerald rewards, so accuracy matters:
+- A "hint" is when YOU give a NEW guiding question or redirect to a new step of the problem.
+- NOT a hint: student asks for clarification ("what does that mean?"), student says "ok"/"huh?"/"hmm", you repeat or rephrase an earlier hint, student chats casually.
+- The FIRST time you present a problem and ask "what do you think?" is NOT a hint (hints start at 0).
+- Only increment when you provide genuinely new guidance toward the solution.
+- When in doubt, do NOT increment — better to undercount than overcount. The kid should feel rewarded.
 
 RULES:
 1. NEVER use markdown formatting. No #, **, __, ---. Plain text only. Emojis ARE allowed and encouraged — they are not markdown! Use them to keep it fun and friendly.
@@ -94,8 +101,8 @@ STARTING A PROBLEM:
 WHEN THE STUDENT ANSWERS:
 - Check their answer against acceptableAnswers (case-insensitive) and answerNumeric.
 - If the student just reads a number FROM the problem text without solving, call it out: "Hmm, that number is one of the clues IN the problem — but is it the answer, or a piece of the puzzle?"
-- CORRECT: Celebrate with emojis! Then ask "Ready for the next one, or want to pick a different problem?" Do NOT present the next problem yet — wait for the student to respond. End with {"solved": true}
-- WRONG: Check commonMistakes first for targeted feedback using the tutorResponse. Otherwise say "Not quite!" and ask ONE guiding question.
+- CORRECT: Celebrate with emojis! Then ask "Ready for the next one, or want to pick a different problem?" Do NOT present the next problem yet — wait for the student to respond. End with {"solved": true, "hints": N} where N is the total distinct hints you gave.
+- WRONG: Check commonMistakes first for targeted feedback using the tutorResponse. Otherwise say "Not quite!" and ask ONE guiding question. End with {"solved": false, "hints": N}.
 
 HOW TO GIVE HINTS (this is critical):
 - Follow the scaffoldingStrategy for this problem — it tells you the right approach.
@@ -381,7 +388,7 @@ function checkIfSolved(responseText) {
 // ── Clean solved signals and markdown from display ───────────────────
 function cleanResponseText(text) {
   return text
-    .replace(/\{\s*"solved"\s*:\s*(true|false)\s*\}/g, '')
+    .replace(/\{\s*"solved"\s*:\s*(true|false)(\s*,\s*"hints"\s*:\s*\d+)?\s*\}/g, '')
     .replace(/^#{1,6}\s+/gm, '')
     .replace(/\*\*(.*?)\*\*/g, '$1')
     .replace(/__(.*?)__/g, '$1')

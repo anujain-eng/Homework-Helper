@@ -6,6 +6,7 @@ let _hintCount = 0;
 let _problemActive = false;
 let _problemSolved = false;
 let _pendingImage = null;
+let _isSending = false;
 
 const ESCALATION_PATTERNS = [
   /i checked/i, /calculator/i,
@@ -125,22 +126,30 @@ function showAnswerKey(pageData) {
 }
 
 async function handleSendMessage() {
+  if (_isSending) return;
+
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if (!text && !_pendingImage) return;
 
-  const hadImage = !!_pendingImage;
+  _isSending = true;
+  const sendBtn = document.getElementById('btn-send');
+  sendBtn.disabled = true;
+
+  const imageToSend = _pendingImage;
+  _pendingImage = null;
+
+  const hadImage = !!imageToSend;
   let imageUrl = null;
-  if (_pendingImage) {
-    imageUrl = `data:image/jpeg;base64,${_pendingImage}`;
+  if (imageToSend) {
+    imageUrl = `data:image/jpeg;base64,${imageToSend}`;
   }
   addChatMessage(text || '📸 Help me with this!', 'student', imageUrl);
   input.value = '';
 
   const typing = document.getElementById('typing-indicator');
 
-  // Phase 1 loading UX for photo uploads
-  if (_pendingImage) {
+  if (hadImage) {
     typing.classList.remove('hidden');
     typing.querySelector?.('.typing-text')?.textContent
       ? (typing.querySelector('.typing-text').textContent = 'Reading your homework page...')
@@ -149,57 +158,78 @@ async function handleSendMessage() {
     typing.classList.remove('hidden');
   }
 
-  // Check for escalation before sending
-  const pageData = getCurrentPageData();
-  if (pageData && text) {
-    const isEscalation = ESCALATION_PATTERNS.some(p => p.test(text));
-    if (isEscalation) {
-      const count = incrementEscalation();
-      if (count >= CONFIG.ESCALATION_THRESHOLD && pageData.problems) {
-        const currentProblem = pageData.problems[_currentProblemIndex] || pageData.problems[0];
-        if (currentProblem) {
-          const result = await escalateToSonnet(currentProblem, text);
-          if (result && result.correct) {
-            typing.classList.add('hidden');
-            addChatMessage(`Wait, let me double-check... You're RIGHT! ${result.explanation || 'Great job!'} 🎉`, 'tutor');
+  try {
+    // Check for escalation before sending
+    const pageData = getCurrentPageData();
+    if (pageData && text) {
+      const isEscalation = ESCALATION_PATTERNS.some(p => p.test(text));
+      if (isEscalation) {
+        const count = incrementEscalation();
+        if (count >= CONFIG.ESCALATION_THRESHOLD && pageData.problems) {
+          const currentProblem = pageData.problems[_currentProblemIndex] || pageData.problems[0];
+          if (currentProblem) {
+            const result = await escalateToSonnet(currentProblem, text);
+            if (result && result.correct) {
+              typing.classList.add('hidden');
+              addChatMessage(`Wait, let me double-check... You're RIGHT! ${result.explanation || 'Great job!'} 🎉`, 'tutor');
+              resetEscalation();
+              _problemSolved = true;
+              onProblemSolved();
+              return;
+            }
             resetEscalation();
-            _problemSolved = true;
-            onProblemSolved();
-            _pendingImage = null;
-            return;
           }
-          resetEscalation();
         }
       }
     }
+
+    const response = await sendToClaude(text, imageToSend);
+
+    typing.classList.add('hidden');
+
+    if (hadImage) {
+      const extractedData = getCurrentPageData();
+      if (extractedData) showAnswerKey(extractedData);
+    }
+
+    const solved = checkIfSolved(response);
+    const hintInfo = parseHintCount(response);
+
+    if (solved) {
+      _problemSolved = true;
+      if (hintInfo && typeof hintInfo.hints === 'number') {
+        _hintCount = hintInfo.hints;
+      }
+    } else if (hintInfo && typeof hintInfo.hints === 'number') {
+      _hintCount = hintInfo.hints;
+    } else if (_problemActive) {
+      _hintCount++;
+    }
+
+    if (!_problemActive) _problemActive = true;
+
+    const cleanText = cleanResponseText(response);
+    addChatMessage(cleanText, 'tutor');
+
+    if (_problemSolved) {
+      onProblemSolved();
+    }
+  } finally {
+    _isSending = false;
+    sendBtn.disabled = false;
   }
+}
 
-  const response = await sendToClaude(text, _pendingImage);
-  _pendingImage = null;
-
-  typing.classList.add('hidden');
-
-  if (hadImage) {
-    const extractedData = getCurrentPageData();
-    if (extractedData) showAnswerKey(extractedData);
+// ── Parse hint count from Haiku's response signal ────────────────────
+function parseHintCount(responseText) {
+  const match = responseText.match(/\{\s*"solved"\s*:\s*(true|false)(?:\s*,\s*"hints"\s*:\s*(\d+))?\s*\}/);
+  if (match) {
+    return {
+      solved: match[1] === 'true',
+      hints: match[2] ? parseInt(match[2], 10) : null
+    };
   }
-
-  // Check if the problem was solved
-  const solved = checkIfSolved(response);
-  if (solved) {
-    _problemSolved = true;
-  } else if (_problemActive) {
-    _hintCount++;
-  } else {
-    _problemActive = true;
-  }
-
-  const cleanText = cleanResponseText(response);
-  addChatMessage(cleanText, 'tutor');
-
-  if (_problemSolved) {
-    onProblemSolved();
-  }
+  return null;
 }
 
 // ── Problem solved! ──────────────────────────────────────────────────
