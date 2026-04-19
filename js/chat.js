@@ -183,7 +183,21 @@ async function handleSendMessage() {
       }
     }
 
-    const response = await sendToClaude(text, imageToSend);
+    let response = await sendToClaude(text, imageToSend);
+
+    // Check for confusion escalation
+    if ((response.includes('"confused": true') || response.includes('"confused":true')) && getConfusionCount() < CONFIG.CONFUSION_ESCALATION_MAX) {
+      const cleanConfused = cleanResponseText(response);
+      addChatMessage(cleanConfused, 'tutor');
+
+      typing.querySelector?.('.typing-text') && (typing.querySelector('.typing-text').textContent = 'Taking another look at your homework...');
+      typing.classList.remove('hidden');
+
+      const clarification = await reexamineWithSonnet();
+      if (clarification) {
+        response = await sendToTutor(text);
+      }
+    }
 
     typing.classList.add('hidden');
 

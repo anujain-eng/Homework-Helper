@@ -9,11 +9,12 @@ const CONFIG = {
   // Claude API
   API_URL: 'https://api.anthropic.com/v1/messages',
 
-  // Phase 1: Sonnet + Extended Thinking — reads & solves all problems from photo (once per page)
+  // Phase 1 Fast: core extraction (blocking — kid waits for this)
   API_MODEL_PHASE1: 'claude-sonnet-4-6',
-  API_VERSION_PHASE1: '2025-04-15',
-  API_THINKING_BUDGET: 8000,
-  API_MAX_TOKENS_PHASE1: 16000,
+  API_MAX_TOKENS_PHASE1_FAST: 4096,
+
+  // Phase 1 Rich: full enrichment (background — fires in parallel)
+  API_MAX_TOKENS_PHASE1_RICH: 8000,
 
   // Phase 2: Haiku — Socratic tutoring with known answers (every message)
   API_MODEL_PHASE2: 'claude-haiku-4-5-20251001',
@@ -22,6 +23,9 @@ const CONFIG = {
   // Escalation: Sonnet re-verify when student insists (rare)
   API_MODEL_ESCALATION: 'claude-sonnet-4-6',
   ESCALATION_THRESHOLD: 2,
+
+  // Confusion escalation: max re-examines per photo
+  CONFUSION_ESCALATION_MAX: 2,
 
   // Text-only (no photo): Haiku direct
   API_MODEL_TEXT_ONLY: 'claude-haiku-4-5-20251001',

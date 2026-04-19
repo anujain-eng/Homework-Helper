@@ -2,7 +2,7 @@
 // EmeraldQuest — Service Worker (offline caching)
 // ==========================================================================
 
-const CACHE_NAME = 'emeraldquest-v19';
+const CACHE_NAME = 'emeraldquest-v20';
 const ASSETS = [
   './',
   './index.html',
