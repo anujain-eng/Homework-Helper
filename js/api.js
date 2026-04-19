@@ -344,12 +344,6 @@ async function auditResponse(draftResponse, systemPrompt) {
     const audited = data.content[0]?.text;
     if (!audited || audited.length < 5) return draftResponse;
 
-    const leakedMeta = /VIOLATION|FIXED VERSION|checking|let me check|rules.*followed|passes all/i.test(audited);
-    if (leakedMeta) {
-      console.warn('Audit leaked meta-commentary, using original:', audited);
-      return draftResponse;
-    }
-
     if (audited !== draftResponse) {
       console.log('Audit rewrote response.\nBefore:', draftResponse, '\nAfter:', audited);
     }
