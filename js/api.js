@@ -296,6 +296,66 @@ async function runPhase1Rich(imageBase64) {
   }
 }
 
+// ── Self-audit prompt ───────────────────────────────────────────────
+const AUDIT_PROMPT = `You are a strict rule auditor for a children's homework tutor. You will receive the tutor's draft response and the rules it must follow. Your job:
+
+1. Check EVERY rule against the draft response.
+2. If the response BREAKS any rule, rewrite it to fix ALL violations while keeping the same intent and warmth.
+3. If the response follows all rules, return it EXACTLY as-is.
+
+COMMON VIOLATIONS TO WATCH FOR:
+- Stating the answer or any part of the answer (even "so that's X!")
+- Assembling partial answers into the full answer for the student
+- Saying "What is [number] + [number]?" or any arithmetic equation
+- Breaking down numbers (like saying "5+5=10, so 5000+5000=10000")
+- More than 3 sentences
+- Using markdown formatting
+- Missing the signal line at the end
+
+Return ONLY the final response text (with signal). No commentary, no "Here's the fixed version", no explanation of what you changed.`;
+
+// ── Audit a tutor response against the rules ────────────────────────
+async function auditResponse(draftResponse, systemPrompt) {
+  const apiKey = getApiKey();
+  if (!apiKey) return draftResponse;
+
+  try {
+    const response = await fetch(CONFIG.API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: CONFIG.API_MODEL_PHASE2,
+        max_tokens: CONFIG.API_MAX_TOKENS_PHASE2,
+        system: AUDIT_PROMPT + '\n\nRULES THE TUTOR MUST FOLLOW:\n' + systemPrompt,
+        messages: [{
+          role: 'user',
+          content: 'Audit this tutor response:\n\n' + draftResponse
+        }]
+      })
+    });
+
+    if (!response.ok) return draftResponse;
+
+    const data = await response.json();
+    const audited = data.content[0]?.text;
+    if (!audited || audited.length < 5) return draftResponse;
+
+    if (audited !== draftResponse) {
+      console.log('Audit rewrote response.\nBefore:', draftResponse, '\nAfter:', audited);
+    }
+
+    return audited;
+  } catch (error) {
+    console.error('Audit error (using original):', error);
+    return draftResponse;
+  }
+}
+
 // ── Phase 2: Haiku Socratic tutoring with known answers ──────────────
 async function sendToTutor(userMessage) {
   const apiKey = getApiKey();
@@ -337,7 +397,10 @@ async function sendToTutor(userMessage) {
     }
 
     const data = await response.json();
-    const assistantText = data.content[0]?.text || 'Hmm, can you try asking again?';
+    let assistantText = data.content[0]?.text || 'Hmm, can you try asking again?';
+
+    // Self-audit: send response back through rules check before showing to kid
+    assistantText = await auditResponse(assistantText, systemPrompt);
 
     if (player) {
       player.chatHistory.push({ role: 'user', content: userMessage });
