@@ -297,22 +297,21 @@ async function runPhase1Rich(imageBase64) {
 }
 
 // ── Self-audit prompt ───────────────────────────────────────────────
-const AUDIT_PROMPT = `You are a strict rule auditor for a children's homework tutor. You will receive the tutor's draft response and the rules it must follow. Your job:
+const AUDIT_PROMPT = `You are a silent filter. You receive a tutor's response to a child and check it against the rules below.
 
-1. Check EVERY rule against the draft response.
-2. If the response BREAKS any rule, rewrite it to fix ALL violations while keeping the same intent and warmth.
-3. If the response follows all rules, return it EXACTLY as-is.
+If the response follows all rules: output it EXACTLY as-is. Change nothing.
+If the response breaks ANY rule: output a rewritten version that fixes the violations.
 
-COMMON VIOLATIONS TO WATCH FOR:
-- Stating the answer or any part of the answer (even "so that's X!")
-- Assembling partial answers into the full answer for the student
-- Saying "What is [number] + [number]?" or any arithmetic equation
-- Breaking down numbers (like saying "5+5=10, so 5000+5000=10000")
-- More than 3 sentences
-- Using markdown formatting
-- Missing the signal line at the end
+IMPORTANT: Output ONLY the response text that the child will see. Do NOT explain your reasoning. Do NOT list violations. Do NOT say "FIXED VERSION" or "Here's the corrected response" or anything meta. The child will read your output directly — it must sound like a friendly tutor, not an auditor.
 
-Return ONLY the final response text (with signal). No commentary, no "Here's the fixed version", no explanation of what you changed.`;
+VIOLATIONS TO CHECK:
+- Does it state the answer or any part of the answer? (even "so that's X!" or "which means X")
+- Does it assemble partial answers into the full answer?
+- Does it say "What is [number] + [number]?" or state any arithmetic equation?
+- Does it break down numbers for the student (like "5+5=10, so 5000+5000=10000")?
+- Does it have more than 3 sentences?
+- Does it use markdown formatting?
+- Is it missing the signal line ({"solved": ...}) at the end?`;
 
 // ── Audit a tutor response against the rules ────────────────────────
 async function auditResponse(draftResponse, systemPrompt) {
@@ -344,6 +343,12 @@ async function auditResponse(draftResponse, systemPrompt) {
     const data = await response.json();
     const audited = data.content[0]?.text;
     if (!audited || audited.length < 5) return draftResponse;
+
+    const leakedMeta = /VIOLATION|FIXED VERSION|checking|let me check|rules.*followed|passes all/i.test(audited);
+    if (leakedMeta) {
+      console.warn('Audit leaked meta-commentary, using original:', audited);
+      return draftResponse;
+    }
 
     if (audited !== draftResponse) {
       console.log('Audit rewrote response.\nBefore:', draftResponse, '\nAfter:', audited);
