@@ -8,13 +8,13 @@ renderCharacterScreen = function() {
   if (!player) return;
 
   const unlockMsg = document.getElementById('character-unlock-msg');
+  const studio = document.getElementById('character-studio');
   const selectionDiv = document.getElementById('character-selection');
   const equipDiv = document.getElementById('character-equip');
 
   if (!player.characterUnlocked && player.emeralds < CONFIG.EMERALDS_UNLOCK_CHARACTER) {
     unlockMsg.classList.remove('hidden');
-    selectionDiv.classList.add('hidden');
-    equipDiv.classList.add('hidden');
+    studio.classList.add('hidden');
     return;
   }
 
@@ -24,8 +24,7 @@ renderCharacterScreen = function() {
       <button class="btn btn--primary" id="btn-unlock-character">Unlock Characters! (2 💎)</button>
     `;
     unlockMsg.classList.remove('hidden');
-    selectionDiv.classList.add('hidden');
-    equipDiv.classList.add('hidden');
+    studio.classList.add('hidden');
 
     document.getElementById('btn-unlock-character').addEventListener('click', () => {
       if (spendEmeralds(CONFIG.EMERALDS_UNLOCK_CHARACTER)) {
@@ -40,6 +39,7 @@ renderCharacterScreen = function() {
   }
 
   unlockMsg.classList.add('hidden');
+  studio.classList.remove('hidden');
   selectionDiv.classList.remove('hidden');
 
   const grid = document.getElementById('character-grid');
@@ -64,16 +64,7 @@ renderCharacterScreen = function() {
     if (char) {
       const avatarDiv = document.getElementById('char-avatar');
       avatarDiv.innerHTML = renderCharacterSVG(char.id, player.equippedItems, { size: 'full', animation: 'idle' });
-
       document.getElementById('char-name').textContent = char.name;
-
-      const equipped = document.getElementById('char-equipped');
-      equipped.innerHTML = '';
-      const eq = player.equippedItems;
-      if (eq.clothes)   equipped.innerHTML += getItemEmoji(eq.clothes);
-      if (eq.hair)      equipped.innerHTML += getItemEmoji(eq.hair);
-      if (eq.ears)      equipped.innerHTML += getItemEmoji(eq.ears);
-      if (eq.accessory) equipped.innerHTML += getItemEmoji(eq.accessory);
 
       equipDiv.classList.remove('hidden');
       renderEquipSlots(player);
@@ -81,9 +72,8 @@ renderCharacterScreen = function() {
       document.getElementById('header-avatar').textContent = char.emoji;
     }
   } else {
-    document.getElementById('char-avatar').innerHTML = '<span style="font-size:4rem">❓</span>';
+    document.getElementById('char-avatar').innerHTML = '<span style="font-size:3rem">❓</span>';
     document.getElementById('char-name').textContent = 'Pick a character!';
-    document.getElementById('char-equipped').innerHTML = '';
     equipDiv.classList.add('hidden');
   }
 };

@@ -124,38 +124,44 @@
 <!-- Character Screen -->
 <div class="screen character-screen" id="screen-character">
   <h2>My K-pop Demon Hunter</h2>
-  <div class="character-display" id="character-display">
-    <div class="character-display__avatar" id="char-avatar">❓</div>
-    <div class="character-display__name" id="char-name">Not Unlocked</div>
-    <div class="character-display__equipped" id="char-equipped"></div>
-  </div>
 
   <div id="character-unlock-msg" class="card card--no-hover" style="text-align: center;">
     <p>🔒 Need <strong>2 💎</strong> to unlock character selection!</p>
     <p style="font-size: var(--text-sm); color: var(--text-secondary); margin-top: var(--space-xs);">Solve homework questions to earn emeralds!</p>
   </div>
 
-  <div id="character-selection" class="hidden">
-    <h4>Choose Your Hunter</h4>
-    <div class="character-grid" id="character-grid"></div>
-  </div>
+  <div class="character-studio" id="character-studio">
+    <div class="character-studio__preview">
+      <div class="character-display" id="character-display">
+        <div class="character-display__avatar" id="char-avatar">❓</div>
+        <div class="character-display__name" id="char-name">Not Unlocked</div>
+      </div>
+    </div>
 
-  <div id="character-equip" class="hidden">
-    <div class="equip-section">
-      <h4>👕 Outfit</h4>
-      <div class="equip-slots" id="equip-clothes"></div>
-    </div>
-    <div class="equip-section">
-      <h4>💇 Hair / Wigs</h4>
-      <div class="equip-slots" id="equip-hair"></div>
-    </div>
-    <div class="equip-section">
-      <h4>🐰 Animal Ears</h4>
-      <div class="equip-slots" id="equip-ears"></div>
-    </div>
-    <div class="equip-section">
-      <h4>✨ Accessories</h4>
-      <div class="equip-slots" id="equip-accessories"></div>
+    <div class="character-studio__panel">
+      <div id="character-selection" class="hidden">
+        <h4>Choose Your Hunter</h4>
+        <div class="character-grid" id="character-grid"></div>
+      </div>
+
+      <div id="character-equip" class="hidden">
+        <div class="equip-section">
+          <h4>👕 Outfit</h4>
+          <div class="equip-slots" id="equip-clothes"></div>
+        </div>
+        <div class="equip-section">
+          <h4>💇 Hair / Wigs</h4>
+          <div class="equip-slots" id="equip-hair"></div>
+        </div>
+        <div class="equip-section">
+          <h4>🐰 Animal Ears</h4>
+          <div class="equip-slots" id="equip-ears"></div>
+        </div>
+        <div class="equip-section">
+          <h4>✨ Accessories</h4>
+          <div class="equip-slots" id="equip-accessories"></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
