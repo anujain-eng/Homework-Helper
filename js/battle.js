@@ -24,7 +24,12 @@ function triggerBattleAnimation(isCritical, onComplete) {
   battleScreen.classList.add('active');
 
   // Set up battle display
-  document.getElementById('battle-player-avatar').textContent = char?.emoji || '⚔️';
+  const playerAvatarEl = document.getElementById('battle-player-avatar');
+  if (char && typeof renderCharacterSVG === 'function') {
+    playerAvatarEl.innerHTML = renderCharacterSVG(char.id, player.equippedItems, { size: 'battle', animation: 'idle' });
+  } else {
+    playerAvatarEl.textContent = char?.emoji || '⚔️';
+  }
   document.getElementById('battle-player-name').textContent = char?.name || player.name;
   document.getElementById('battle-demon-avatar').textContent = demon.emoji;
   document.getElementById('battle-demon-name').textContent = demon.name;
@@ -127,7 +132,12 @@ function showVictoryModal(result) {
   const player = getCurrentPlayer();
   const char = player ? CHARACTERS.find(c => c.id === player.character) : null;
 
-  document.getElementById('victory-char').textContent = char?.emoji || '⚔️';
+  const victoryCharEl = document.getElementById('victory-char');
+  if (char && typeof renderCharacterSVG === 'function') {
+    victoryCharEl.innerHTML = renderCharacterSVG(char.id, player.equippedItems, { size: 'battle', animation: 'celebrate' });
+  } else {
+    victoryCharEl.textContent = char?.emoji || '⚔️';
+  }
   document.getElementById('victory-demon-name').textContent = `${result.demon.name} defeated!`;
   document.getElementById('victory-emeralds').textContent = `+${result.emeralds} 💎`;
 

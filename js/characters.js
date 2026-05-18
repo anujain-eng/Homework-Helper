@@ -12,7 +12,6 @@ renderCharacterScreen = function() {
   const equipDiv = document.getElementById('character-equip');
 
   if (!player.characterUnlocked && player.emeralds < CONFIG.EMERALDS_UNLOCK_CHARACTER) {
-    // Not enough emeralds yet
     unlockMsg.classList.remove('hidden');
     selectionDiv.classList.add('hidden');
     equipDiv.classList.add('hidden');
@@ -20,7 +19,6 @@ renderCharacterScreen = function() {
   }
 
   if (!player.characterUnlocked && player.emeralds >= CONFIG.EMERALDS_UNLOCK_CHARACTER) {
-    // Can unlock — show unlock button
     unlockMsg.innerHTML = `
       <p>🎉 You have enough emeralds!</p>
       <button class="btn btn--primary" id="btn-unlock-character">Unlock Characters! (2 💎)</button>
@@ -41,32 +39,34 @@ renderCharacterScreen = function() {
     return;
   }
 
-  // Character unlocked
   unlockMsg.classList.add('hidden');
   selectionDiv.classList.remove('hidden');
 
-  // Render character grid
   const grid = document.getElementById('character-grid');
   grid.innerHTML = '';
   CHARACTERS.forEach(char => {
     const card = document.createElement('div');
     card.className = 'character-card' + (player.character === char.id ? ' selected' : '');
-    card.innerHTML = `
-      <div class="character-card__emoji">${char.emoji}</div>
-      <div class="character-card__name">${char.name}</div>
-    `;
+    const preview = document.createElement('div');
+    preview.className = 'character-card__preview';
+    preview.innerHTML = renderCharacterMini(char.id);
+    card.appendChild(preview);
+    const name = document.createElement('div');
+    name.className = 'character-card__name';
+    name.textContent = char.name;
+    card.appendChild(name);
     card.addEventListener('click', () => selectCharacter(char.id));
     grid.appendChild(card);
   });
 
-  // Update display
   if (player.character) {
     const char = CHARACTERS.find(c => c.id === player.character);
     if (char) {
-      document.getElementById('char-avatar').textContent = char.emoji;
+      const avatarDiv = document.getElementById('char-avatar');
+      avatarDiv.innerHTML = renderCharacterSVG(char.id, player.equippedItems, { size: 'full', animation: 'idle' });
+
       document.getElementById('char-name').textContent = char.name;
 
-      // Show equipped items
       const equipped = document.getElementById('char-equipped');
       equipped.innerHTML = '';
       const eq = player.equippedItems;
@@ -75,15 +75,13 @@ renderCharacterScreen = function() {
       if (eq.ears)      equipped.innerHTML += getItemEmoji(eq.ears);
       if (eq.accessory) equipped.innerHTML += getItemEmoji(eq.accessory);
 
-      // Show equip section
       equipDiv.classList.remove('hidden');
       renderEquipSlots(player);
 
-      // Update header avatar
       document.getElementById('header-avatar').textContent = char.emoji;
     }
   } else {
-    document.getElementById('char-avatar').textContent = '❓';
+    document.getElementById('char-avatar').innerHTML = '<span style="font-size:4rem">❓</span>';
     document.getElementById('char-name').textContent = 'Pick a character!';
     document.getElementById('char-equipped').innerHTML = '';
     equipDiv.classList.add('hidden');
@@ -118,7 +116,6 @@ function renderEquipCategory(containerId, category, player) {
   if (!container) return;
   container.innerHTML = '';
 
-  // Get owned items of this category
   const ownedIds = player.ownedItems.filter(id => {
     const item = findShopItem(id);
     return item && item.type === category;
@@ -134,7 +131,6 @@ function renderEquipCategory(containerId, category, player) {
     return;
   }
 
-  // "None" option
   const noneSlot = document.createElement('div');
   noneSlot.className = 'equip-slot' + (!player.equippedItems[category] ? ' filled' : '');
   noneSlot.textContent = '❌';
