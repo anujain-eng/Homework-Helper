@@ -122,9 +122,24 @@ async function loadFromGitHub() {
     const data = await response.json();
     const content = JSON.parse(atob(data.content));
 
-    // Merge: GitHub data takes priority, but keep local-only fields
     if (content.players) {
-      AppState.players = content.players;
+      for (const [name, ghPlayer] of Object.entries(content.players)) {
+        const local = AppState.players[name];
+        if (!local) {
+          AppState.players[name] = ghPlayer;
+        } else {
+          // Keep whichever has more emeralds (emeralds only go up from gameplay)
+          const ghEmeralds = ghPlayer.emeralds || 0;
+          const localEmeralds = local.emeralds || 0;
+          if (ghEmeralds > localEmeralds) {
+            const savedHistory = local.chatHistory || [];
+            AppState.players[name] = ghPlayer;
+            if (!ghPlayer.chatHistory || ghPlayer.chatHistory.length === 0) {
+              AppState.players[name].chatHistory = savedHistory;
+            }
+          }
+        }
+      }
       saveToLocal();
       return true;
     }
