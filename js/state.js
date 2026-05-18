@@ -50,6 +50,11 @@ function loadFromLocal() {
     const data = localStorage.getItem('eq_state');
     if (data) {
       AppState = JSON.parse(data);
+      // Ensure Amyra has at least 90 emeralds for testing
+      if (AppState.players && AppState.players['Amyra'] && AppState.players['Amyra'].emeralds < 90) {
+        AppState.players['Amyra'].emeralds = 90;
+        AppState.players['Amyra'].characterUnlocked = true;
+      }
       return true;
     }
   } catch (e) {
