@@ -2,7 +2,27 @@
   "players": {
     "Amyra": {
       "name": "Amyra",
-      "emeralds": 90
+      "avatar": "🌟",
+      "secretQuestion": "Where does your dad work?",
+      "secretAnswer": "onlyexit",
+      "emeralds": 90,
+      "character": null,
+      "characterUnlocked": true,
+      "equippedItems": { "clothes": null, "hair": null, "ears": null, "accessory": null },
+      "ownedItems": [],
+      "pets": [{ "id": "dog", "name": "Buddy", "emoji": "🐶", "rarity": "common", "happiness": 100 }],
+      "homes": [],
+      "petsInHomes": {},
+      "defeatedDemons": [],
+      "activeDemon": null,
+      "activeDemonHP": null,
+      "questMode": "hunt",
+      "streak": 0,
+      "questionsCompleted": 0,
+      "lastLogin": "",
+      "birthdayBonusClaimed": "",
+      "chatHistory": [],
+      "chatStats": []
     }
   }
 }
